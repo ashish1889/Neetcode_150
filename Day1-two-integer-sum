@@ -1,5 +1,283 @@
 Q- https://neetcode.io/problems/two-integer-sum?list=neetcode150
 
+1. Brute Force-
+
+C++ solution-
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        for (int i = 0; i < nums.size(); i++) {
+            for (int j = i + 1; j < nums.size(); j++) {
+                if (nums[i] + nums[j] == target) {
+                    return {i, j};
+                }
+            }
+        }
+        return {};
+    }
+};
+
+
+Python solution-
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        for i in range(len(nums)):
+            for j in range(i + 1, len(nums)):
+                if nums[i] + nums[j] == target:
+                    return [i, j]
+        return []
+
+Kotlin solution-
+
+class Solution {
+    fun twoSum(nums: IntArray, target: Int): IntArray {
+        for (i in nums.indices) {
+            for (j in i + 1 until nums.size) {
+                if (nums[i] + nums[j] == target) {
+                    return intArrayOf(i, j)
+                }
+            }
+        }
+        return intArrayOf()
+    }
+}
+
+Time & Space Complexity
+Time complexity: O(n^2)
+Space complexity: O(1)
+
+2. Sorting- 
+
+C++ solution-
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        vector<pair<int, int>> A;
+        for (int i = 0; i < nums.size(); i++) {
+            A.push_back({nums[i], i});
+        }
+
+        sort(A.begin(), A.end());
+
+        int i = 0, j = nums.size() - 1;
+        while (i < j) {
+            int cur = A[i].first + A[j].first;
+            if (cur == target) {
+                return {min(A[i].second, A[j].second),
+                        max(A[i].second, A[j].second)};
+            } else if (cur < target) {
+                i++;
+            } else {
+                j--;
+            }
+        }
+        return {};
+    }
+};
+
+Python solution-
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        A = []
+        for i, num in enumerate(nums):
+            A.append([num, i])
+
+        A.sort()
+        i, j = 0, len(nums) - 1
+        while i < j:
+            cur = A[i][0] + A[j][0]
+            if cur == target:
+                return [min(A[i][1], A[j][1]),
+                        max(A[i][1], A[j][1])]
+            elif cur < target:
+                i += 1
+            else:
+                j -= 1
+        return []
+
+Kotlin solution-
+
+class Solution {
+    fun twoSum(nums: IntArray, target: Int): IntArray {
+        val A = nums.mapIndexed { index, num -> num to index }.toMutableList()
+        A.sortBy { it.first }
+
+        var i = 0
+        var j = nums.size - 1
+        while (i < j) {
+            val cur = A[i].first + A[j].first
+            if (cur == target) {
+                return intArrayOf(
+                    minOf(A[i].second, A[j].second),
+                    maxOf(A[i].second, A[j].second)
+                )
+            } else if (cur < target) {
+                i++
+            } else {
+                j--
+            }
+        }
+        return intArrayOf()
+    }
+}
+
+
+Time & Space Complexity
+Time complexity:O(nlogn)
+Space complexity:O(n)
+
+3. Hash Map (Two Pass)-
+C++ solution-
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> indices;  // val -> index
+
+        for (int i = 0; i < nums.size(); i++) {
+            indices[nums[i]] = i;
+        }
+
+        for (int i = 0; i < nums.size(); i++) {
+            int diff = target - nums[i];
+            if (indices.count(diff) && indices[diff] != i) {
+                return {i, indices[diff]};
+            }
+        }
+
+        return {};
+    }
+};
+
+Python solution-
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        indices = {}  # val -> index
+
+        for i, n in enumerate(nums):
+            indices[n] = i
+
+        for i, n in enumerate(nums):
+            diff = target - n
+            if diff in indices and indices[diff] != i:
+                return [i, indices[diff]]
+        return []
+
+
+Kotlin solution-
+
+class Solution {
+    fun twoSum(nums: IntArray, target: Int): IntArray {
+        val indices = HashMap<Int, Int>()
+
+        for ((i, n) in nums.withIndex()) {
+            indices[n] = i
+        }
+
+        for ((i, n) in nums.withIndex()) {
+            val diff = target - n
+            if (indices.containsKey(diff) && indices[diff] != i) {
+                return intArrayOf(i, indices[diff]!!)
+            }
+        }
+        return intArrayOf()
+    }
+}
+
+indices[diff]!! retrieves the index associated with diff from the indices map. The !! is a non-null assertion operator. 
+It tells Kotlin that you're confident that indices[diff] will not be null at this point. If it is null, the code will throw a NullPointerException.
+This is typically used when the containsKey check guarantees the existence of the key.
+
+Time & Space Complexity
+Time complexity:O(n)
+Space complexity:O(n)
+
+4. Hash Map (One Pass)-
+C++ solution-
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        int n = nums.size();
+        unordered_map<int, int> prevMap;
+
+        for (int i = 0; i < n; i++) {
+            int diff = target - nums[i];
+            if (prevMap.find(diff) != prevMap.end()) {
+                return {prevMap[diff], i};
+            }
+            prevMap.insert({nums[i], i});
+        }
+        return {};
+    }
+};
+
+Python solution-
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        prevMap = {}  # val -> index
+
+        for i, n in enumerate(nums):
+            diff = target - n
+            if diff in prevMap:
+                return [prevMap[diff], i]
+            prevMap[n] = i
+
+Kotlin solution-
+
+class Solution {
+    fun twoSum(nums: IntArray, target: Int): IntArray {
+        val prevMap = HashMap<Int, Int>()
+
+        for ((i, n) in nums.withIndex()) {
+            val diff = target - n
+            if (prevMap.containsKey(diff)) {
+                return intArrayOf(prevMap[diff]!!, i)
+            }
+            prevMap[n] = i
+        }
+        return intArrayOf()
+    }
+}
+
+
+Time & Space Complexity
+Time complexity:O(n)
+Space complexity:O(n)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================================================================================================================================================================
+
+Mine solution-
+
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
