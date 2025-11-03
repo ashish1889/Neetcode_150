@@ -1,0 +1,41 @@
+Q- https://neetcode.io/problems/two-integer-sum?list=neetcode150
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int,int> diff;
+        vector<int> res;
+        int index;
+        int a;
+
+
+        for(int i = 0;i<nums.size();i++)
+        {
+            diff[nums[i]] = i;
+        }
+
+        for(int i = 0;i<nums.size();i++)
+        {
+            a = target - nums[i];
+            if(diff.count(a)>0){
+             index = diff[a];
+             if(i<index)
+             {
+                res.push_back(i);
+                res.push_back(index);
+             }
+             else if(index <i)
+             {
+                res.push_back(index);
+                res.push_back(i);
+             }
+             if(index!=i)
+             break;
+            }
+            
+
+
+        }
+        return res;
+    }
+};
