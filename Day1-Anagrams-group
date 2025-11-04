@@ -1,0 +1,120 @@
+Q- https://neetcode.io/problems/anagram-groups?list=neetcode150
+
+1. Sorting-
+
+C++ solution-
+
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string, vector<string>> res;
+        for (const auto& s : strs) {
+            string sortedS = s;
+            sort(sortedS.begin(), sortedS.end());
+            res[sortedS].push_back(s);
+        }
+        vector<vector<string>> result;
+        for (auto& pair : res) {
+            result.push_back(pair.second);
+        }
+        return result;
+    }
+};
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity: O(m*nlogn)
+Space complexity:O(m*n)
+
+2. Hash Table
+
+
+C++ solution-
+
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string, vector<string>> res;
+        for (const auto& s : strs) {
+            vector<int> count(26, 0);
+            for (char c : s) {
+                count[c - 'a']++;
+            }
+            string key = to_string(count[0]);
+            for (int i = 1; i < 26; ++i) {
+                key += ',' + to_string(count[i]);
+            }
+            res[key].push_back(s);
+        }
+        vector<vector<string>> result;
+        for (const auto& pair : res) {
+            result.push_back(pair.second);
+        }
+        return result;
+    }
+};
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity:O(m*n)
+Space complexity:
+  O(m) extra space
+  O(m*n) space for o/p list
+
+====================================================================================================================================================================================================
+
+Mine code tweaks-
+
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string, vector<string>> res;
+        for (const auto& s : strs) {
+            vector<int> count(26, 0);
+            for (char c : s) {
+                count[c - 'a']++;
+            }
+            string key = to_string(count[0]);
+            for (int i = 1; i < 26; ++i) {
+                key += ',' + to_string(count[i]);
+            }
+            res[key].push_back(s);
+        }
+        vector<vector<string>> result;
+        for (const auto& pair : res) {
+             //++code tweak
+             std::cout << pair.first << " -> ";
+            std::cout << "[";
+            for (size_t i = 0; i < pair.second.size(); ++i) {
+                std::cout << "\"" << pair.second[i] << "\"";
+                if (i < pair.second.size() - 1) {
+                    std::cout << ", ";
+                }
+            }
+            std::cout << "]" << std::endl;
+           //--code tweak
+            result.push_back(pair.second);
+        }
+        return result;
+    }
+};
+
+O/p on Stdout-
+
+I/p-
+
+strs=["act","pots","tops","cat","stop","hat"]
+
+stdout-
+
+1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0 -> ["hat"]
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0 -> ["pots", "tops", "stop"]
+1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0 -> ["act", "cat"]
+
+O/p-
+
+[["hat"],["pots","tops","stop"],["act","cat"]]
