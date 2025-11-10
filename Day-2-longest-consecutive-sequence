@@ -109,6 +109,8 @@ Space complexity:O(1) or O(n) depending on sorting algorithm
 
 3. Hash Set-
 
+Here the logic is that , set is being checked whether the given number  has the left side neighbour or not, if no left neighbour then its the start of sequence.
+
 C++ solution-
 
 class Solution {
