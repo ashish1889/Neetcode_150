@@ -1,0 +1,59 @@
+Q. https://neetcode.io/problems/max-water-container?list=neetcode150
+
+
+
+C++ solution-
+
+class Solution {
+public:
+    int maxArea(vector<int>& heights) {
+        int res = 0;
+        for (int i = 0; i < heights.size(); i++) {
+            for (int j = i + 1; j < heights.size(); j++) {
+                res = max(res, min(heights[i], heights[j]) * (j - i));
+            }
+        }
+        return res;
+    }
+};
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity:O(n^2)
+Space complexity:O(1)
+
+
+
+
+C++ solution-
+
+class Solution {
+public:
+    int maxArea(vector<int>& heights) {
+        int l = 0;
+        int r = heights.size() - 1;
+        int res = 0;
+
+        while (l < r) {
+            int area = min(heights[l], heights[r]) * (r - l);
+            res = max(res, area);
+
+            if (heights[l] <= heights[r]) {
+                l++;
+            } else {
+                r--;
+            }
+        }
+        return res;
+    }
+};
+
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity:O(n)
+Space complexity:O(1)
