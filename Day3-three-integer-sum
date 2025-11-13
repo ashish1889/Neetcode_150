@@ -119,3 +119,4 @@ Kotlin solution-
 Time & Space Complexity
 Time complexity:O(n^2)
 Space complexity:O(1) or O(n) extra space depending on the sorting algorithm. O(m) space for the output list.
+Where m is the number of triplets and n is the length of the given array.
