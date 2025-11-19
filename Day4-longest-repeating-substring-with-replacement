@@ -1,0 +1,109 @@
+Q- https://neetcode.io/problems/longest-repeating-substring-with-replacement/question
+
+
+1. Brute Force-
+
+C++ solution-
+
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        int res = 0;
+        for (int i = 0; i < s.size(); i++) {
+            unordered_map<char, int> count;
+            int maxf = 0;
+            for (int j = i; j < s.size(); j++) {
+                count[s[j]]++;
+                maxf = max(maxf, count[s[j]]);
+                if ((j - i + 1) - maxf <= k) {
+                    res = max(res, j - i + 1);
+                }
+            }
+        }
+        return res;
+    }
+};
+
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity: O(n^2)
+Space complexity: O(m)
+
+
+2. Sliding Window-
+
+C++ solution-
+
+class Solution {
+public:
+    int characterReplacement(std::string s, int k) {
+        int res = 0;
+        unordered_set<char> charSet(s.begin(), s.end());
+
+        for (char c : charSet) {
+            int count = 0, l = 0;
+            for (int r = 0; r < s.size(); r++) {
+                if (s[r] == c) {
+                    count++;
+                }
+
+                while ((r - l + 1) - count > k) {
+                    if (s[l] == c) {
+                        count--;
+                    }
+                    l++;
+                }
+
+                res = std::max(res, r - l + 1);
+            }
+        }
+        return res;
+    }
+};
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity: O(m*n)
+Space complexity: O(m)
+
+Where n is the length of the string and m is the total number of unique characters in the string.
+
+
+3. Sliding Window (Optimal)-
+
+C++ solution-
+
+class Solution {
+public:
+    int characterReplacement(std::string s, int k) {
+        unordered_map<char, int> count;
+        int res = 0;
+
+        int l = 0, maxf = 0;
+        for (int r = 0; r < s.size(); r++) {
+            count[s[r]]++;
+            maxf = max(maxf, count[s[r]]);
+
+            while ((r - l + 1) - maxf > k) {
+                count[s[l]]--;
+                l++;
+            }
+            res = max(res, r - l + 1);
+        }
+
+        return res;
+    }
+};
+
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity: O(n)
+Space complexity: O(m)
