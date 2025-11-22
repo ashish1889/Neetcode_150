@@ -1,0 +1,174 @@
+Q- https://neetcode.io/problems/minimum-window-with-characters/question
+
+
+1. Brute Force-
+
+C++ solution-
+
+class Solution {
+public:
+    // This is the function that finds the minimum window substring
+    string minWindow(string s, string t) {
+        // If the target string 't' is empty, there's no window to find, so return an empty string.
+        if (t.empty()) return "";
+
+        // countT is an unordered_map used to store the frequency of each character in 't'.
+        unordered_map<char, int> countT;
+        for (char c : t) {
+            countT[c]++;
+        }
+
+        // res stores the start and end indices of the best window found so far, initialized to an invalid state.
+        pair<int, int> res = {-1, -1};
+        // resLen stores the length of the best window found so far, initialized to a very large value.
+        int resLen = INT_MAX;
+
+        // The outer loop iterates through all possible start indices (i) for the window in string 's'.
+        for (int i = 0; i < s.length(); i++) {
+            // countS is a frequency map for the characters in the *current* window being examined (from index i to j).
+            unordered_map<char, int> countS;
+            // The inner loop iterates through all possible end indices (j) for the window, starting from 'i'.
+            for (int j = i; j < s.length(); j++) {
+                // Add the character at the current end index to the current window's frequency map.
+                countS[s[j]]++;
+
+                // 'flag' is a boolean to track if the current window is a valid solution (contains all characters of 't').
+                bool flag = true;
+                // Iterate through every required character and its frequency in 't'.
+                for (auto &[c, cnt] : countT) {
+                    // If the current window (countS) has fewer occurrences of character 'c' than required by 't' (cnt),
+                    // then this window is not valid.
+                    if (countS[c] < cnt) {
+                        flag = false;
+                        break; // No need to check further characters; this window fails.
+                    }
+                }
+
+                // If the flag is still true, the window is valid.
+                // Check if its length (j - i + 1) is shorter than the shortest valid window found so far (resLen).
+                if (flag && (j - i + 1) < resLen) {
+                    // Update resLen to the new, shorter length.
+                    resLen = j - i + 1;
+                    // Update res to store the start and end indices of this new best window.
+                    res = {i, j};
+                }
+            }
+        }
+
+        // After checking all possible windows, if resLen is still INT_MAX, it means no valid window was found. Return an empty string.
+        // Otherwise, use s.substr to extract the substring starting from res.first with the length resLen.
+        return resLen == INT_MAX ? "" : s.substr(res.first, resLen);
+    }
+};
+
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity: O(n^2*m)
+Space complexity: O(m)
+
+Where n is the length of the string s and m is the total number of unique characters in the strings t and s
+
+Analysis of the Approach
+This brute-force solution has a time complexity of approximately O(N³M), where N is the length of s and M is the length of t, because:
+There are O(N²) possible windows (pairs of i and j).
+For each window, it iterates through all characters in t (O(M)) to verify validity.
+Map lookups also add overhead.
+This approach is inefficient for large inputs and will likely exceed the time limit in typical competitive programming environments. 
+The standard optimal solution uses a sliding window technique (two pointers) with a time complexity of O(N+M).
+
+
+
+
+
+2. Sliding Window- 
+
+C++ solution-
+
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        // Defines the class and the public method that accepts two strings, s and t.
+
+        if (t.empty()) return "";
+        // If the target string 't' is empty, there is no requirement for 's', so an empty string is returned immediately.
+
+        unordered_map<char, int> countT, window;
+        // Initializes two unordered maps (hash maps) to store character frequencies:
+        // 'countT' stores the required frequencies of characters in 't'.
+        // 'window' stores the frequencies of characters in the current sliding window of 's'.
+
+        for (char c : t) {
+            countT[c]++;
+        }
+        // Iterates through each character 'c' in string 't' and increments its count in 'countT'. This populates the requirement map.
+
+        int have = 0, need = countT.size();
+        // 'have' tracks how many *unique* required characters currently meet their frequency count in the window.
+        // 'need' stores the total number of *unique* characters in 't' that must be found (the size of countT).
+
+        pair<int, int> res = {-1, -1};
+        // 'res' stores the start and end indices of the smallest valid window found so far. Initialized to {-1, -1}.
+
+        int resLen = INT_MAX;
+        // 'resLen' stores the length of the smallest valid window. Initialized to the maximum possible integer value (to ensure the first valid length is smaller).
+
+        int l = 0;
+        // 'l' (left pointer) defines the start of the current sliding window.
+
+        for (int r = 0; r < s.length(); r++) {
+            // 'r' (right pointer) iterates through 's', expanding the window to the right.
+
+            char c = s[r];
+            // Gets the character at the current right pointer position.
+
+            window[c]++;
+            // Increments the count of this character in the 'window' frequency map.
+
+            if (countT.count(c) && window[c] == countT[c]) {
+                have++;
+            }
+            // Checks if the character 'c' is a required character (exists in countT).
+            // If it is, and its count in the window now matches the required count in 't', increment 'have'.
+
+            while (have == need) {
+                // This 'while' loop runs when the current window contains all required characters with sufficient frequency. We now attempt to shrink the window from the left to find the minimum possible size.
+
+                if ((r - l + 1) < resLen) {
+                    // If the current window length is smaller than the smallest found so far:
+
+                    resLen = r - l + 1;
+                    // Update the minimum length.
+
+                    res = {l, r};
+                    // Update the start and end indices of the result window.
+                }
+
+                window[s[l]]--;
+                // Shrink the window: decrement the count of the character at the left pointer's position in the 'window' map.
+
+                if (countT.count(s[l]) && window[s[l]] < countT[s[l]]) {
+                    have--;
+                }
+                // If the character being removed from the left is a required character (exists in countT) AND its count in the window just dropped below the required count:
+
+                l++;
+                // Move the left pointer one position to the right, officially shrinking the window. The 'while' condition will be re-evaluated to see if the window is still valid.
+            }
+        }
+
+        return resLen == INT_MAX ? "" : s.substr(res.first, resLen);
+        // After the main loop finishes, if 'resLen' is still INT_MAX, no valid window was found, so an empty string "" is returned.
+        // Otherwise, the substring is extracted from 's' starting at index res.first with a length of resLen, and returned.
+    }
+};
+
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity:O(n+m)
+Space complexity:O(m)
