@@ -1,0 +1,82 @@
+Q- https://neetcode.io/problems/validate-parentheses/question
+
+C++ solution-
+
+class Solution {
+public:
+    bool isValid(string s) {
+        std::stack<char> stack;
+        std::unordered_map<char, char> closeToOpen = {
+            {')', '('},
+            {']', '['},
+            {'}', '{'}
+        };
+
+        for (char c : s) {
+            if (closeToOpen.count(c)) {
+                if (!stack.empty() && stack.top() == closeToOpen[c]) {
+                    stack.pop();
+                } else {
+                    return false;
+                }
+            } else {
+                stack.push(c);
+            }
+        }
+        return stack.empty();
+    }
+};
+
+Python solution-
+Kotlin solution-
+
+Time & Space Complexity
+Time complexity:O(n)
+Space complexity:O(n)
+
+============================================================================================================================================================================================================================
+
+My trial code-
+
+class Solution {
+public:
+    bool isValid(string s) {
+        stack<char> st;
+        char temp;
+        /*if(s[0] == ')'||s[0] == '}'||s[0] == ']')
+        return false;*/
+
+        for(char c: s)
+        {
+            if(c == '('||c == '{'|| c == '[')
+              st.push(c);
+            else if(!st.empty())
+            {
+                temp = st.top();
+                st.pop();
+                switch(temp){
+                case '(':
+                 if(c != ')')
+                 return false;
+                 break;
+                 case '{':
+                 if(c != '}')
+                 return false;
+                 break;
+                 case '[':
+                 if(c != ']')
+                 return false;
+                 break;
+                 default:
+                 return false;
+                }
+
+            }
+            else
+            return false;
+        }
+
+        return st.empty();
+        
+    }
+};
